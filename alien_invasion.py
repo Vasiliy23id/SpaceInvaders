@@ -141,7 +141,7 @@ class AlienInvasion:
         number_enemis_x = available_space_x // (2 * enemy_width)
 
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - (3 * enemy_height) - ship_height)
+        available_space_y = (self.settings.screen_height - (5 * enemy_height) - ship_height)
 
         number_rows = available_space_y // (2 * enemy_height)
 
