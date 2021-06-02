@@ -6,7 +6,7 @@ from time import sleep
 from ship import Ship
 from settings import Settings
 from bullet import Bullet
-from alien import Alien
+from enemy import Enemy
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
@@ -28,7 +28,7 @@ class AlienInvasion:
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
-        self.aliens = pygame.sprite.Group()
+        self.enemis = pygame.sprite.Group()
 
         self._create_fleet()
 
@@ -82,7 +82,7 @@ class AlienInvasion:
             self.sb.prep_level()
             self.sb.prep_ships()
 
-            self.aliens.empty()
+            self.enemis.empty()
             self.bullets.empty()
 
             self._create_fleet()
@@ -95,7 +95,7 @@ class AlienInvasion:
         self.ship.blitme()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
-        self.aliens.draw(self.screen)
+        self.enemis.draw(self.screen)
 
         self.sb.show_score()
 
@@ -114,7 +114,7 @@ class AlienInvasion:
         for bullet in self.bullets.copy():
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
-        self._check_bullet_alien_collisions()
+        self._check_bullet_enemy_collisions()
 
     def _ship_hit(self):
         if self.stats.ships_left > 0:
@@ -122,7 +122,7 @@ class AlienInvasion:
             self.stats.ships_left -= 1
             self.sb.prep_ships()
 
-            self.aliens.empty()
+            self.enemis.empty()
             self.bullets.empty()
 
             self._create_fleet()
@@ -135,41 +135,41 @@ class AlienInvasion:
             pygame.mouse.set_visible(True)
 
     def _create_fleet(self):
-        alien = Alien(self)
-        alien_width, alien_height = alien.rect.size
-        available_space_x = self.settings.screen_width - (2 * alien_width)
-        number_aliens_x = available_space_x // (2 * alien_width)
+        enemy = Enemy(self)
+        enemy_width, enemy_height = enemy.rect.size
+        available_space_x = self.settings.screen_width - (2 * enemy_width)
+        number_enemis_x = available_space_x // (2 * enemy_width)
 
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - (3 * alien_height) - ship_height)
+        available_space_y = (self.settings.screen_height - (3 * enemy_height) - ship_height)
 
-        number_rows = available_space_y // (2 * alien_height)
+        number_rows = available_space_y // (2 * enemy_height)
 
         for row_number in range(number_rows):
-            for alien_number in range(number_aliens_x):
-                self._create_alien(alien_number, row_number)
+            for enemy_number in range(number_enemis_x):
+                self._create_enemy(enemy_number, row_number)
 
 
-    def _create_alien(self, alien_number, row_number):
-        alien = Alien(self)
-        alien_width, alien_height = alien.rect.size
-        alien.x = alien_width + 2 * alien_width * alien_number
-        alien.rect.x = alien.x
-        alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
-        self.aliens.add(alien)
+    def _create_enemy(self, enemy_number, row_number):
+        enemy = Enemy(self)
+        enemy_width, enemy_height = enemy.rect.size
+        enemy.x = enemy_width + 2 * enemy_width * enemy_number
+        enemy.rect.x = enemy.x
+        enemy.rect.y = enemy.rect.height + 2 * enemy.rect.height * row_number
+        self.enemis.add(enemy)
 
 
 
-    def _check_bullet_alien_collisions(self):
-        collisions = pygame.sprite.groupcollide(self.bullets, self.aliens, True, True)
+    def _check_bullet_enemy_collisions(self):
+        collisions = pygame.sprite.groupcollide(self.bullets, self.enemis, True, True)
 
         if collisions:
-            for aliens in collisions.values():
-                self.stats.score += self.settings.alien_points * len(aliens)
+            for enemis in collisions.values():
+                self.stats.score += self.settings.enemy_points * len(enemis)
             self.sb.prep_score()
             self.sb.check_high_score()
 
-        if not self.aliens:
+        if not self.enemis:
             self.bullets.empty()
             self._create_fleet()
             self.settings.increase_speed()
@@ -177,18 +177,18 @@ class AlienInvasion:
             self.stats.level += 1
             self.sb.prep_level()
 
-    def _update_aliens(self):
+    def _update_enemis(self):
         self._check_fleet_edges()
-        self.aliens.update()
+        self.enemis.update()
 
-        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+        if pygame.sprite.spritecollideany(self.ship, self.enemis):
             self._ship_hit()
-        self._check_aliens_bottom()
+        self._check_enemis_bottom()
 
 
     def _check_fleet_edges(self):
-        for alien in self.aliens.sprites():
-            if alien.check_edges():
+        for enemy in self.enemis.sprites():
+            if enemy.check_edges():
                 self._change_fleet_direction()
                 break
 
@@ -196,16 +196,16 @@ class AlienInvasion:
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
 
-    def _check_aliens_bottom(self):
+    def _check_enemis_bottom(self):
         screen_rect = self.screen.get_rect()
-        for alien in self.aliens.sprites():
-            if alien.rect.bottom >= screen_rect.bottom:
+        for enemy in self.enemis.sprites():
+            if enemy.rect.bottom >= screen_rect.bottom:
                 self._ship_hit()
                 break
 
     def _change_fleet_direction(self):
-        for alien in self.aliens.sprites():
-                alien.rect.y += self.settings.fleet_drop_speed
+        for enemy in self.enemis.sprites():
+                enemy.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
 
     def run_game(self):
@@ -215,7 +215,7 @@ class AlienInvasion:
             if self.stats.game_active:
                 self.ship.update()
                 self._update_bullets()
-                self._update_aliens()
+                self._update_enemis()
                 
             self._update_screen()
 

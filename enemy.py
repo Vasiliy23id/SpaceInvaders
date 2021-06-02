@@ -1,7 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
-class Alien(Sprite):
+class Enemy(Sprite):
     def __init__(self, ai_game):
         super().__init__()
         self.screen = ai_game.screen
@@ -21,6 +21,6 @@ class Alien(Sprite):
             return True
 
     def update(self):
-        self.x += (self.settings.alien_speed *
+        self.x += (self.settings.enemy_speed *
                     self.settings.fleet_direction)
         self.rect.x = self.x
