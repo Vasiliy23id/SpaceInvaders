@@ -172,6 +172,7 @@ class AlienInvasion:
         if not self.enemis:
             self.bullets.empty()
             self._create_fleet()
+            self.ship.center_ship()
             self.settings.increase_speed()
 
             self.stats.level += 1
