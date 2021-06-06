@@ -1,6 +1,7 @@
 import pygame
 from pygame.sprite import Sprite
 
+
 class Enemy(Sprite):
     def __init__(self, ai_game):
         super().__init__()
@@ -22,5 +23,6 @@ class Enemy(Sprite):
 
     def update(self):
         self.x += (self.settings.enemy_speed *
-                    self.settings.fleet_direction)
+                   self.settings.fleet_direction)
         self.rect.x = self.x
+

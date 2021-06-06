@@ -1,13 +1,13 @@
 import pygame
 from pygame.sprite import Sprite
 
+
 class Ship(Sprite):
     def __init__(self, ai_game):
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
         self.screen_rect = ai_game.screen.get_rect()
-
 
         self.image = pygame.image.load('images/ship.bmp')
         self.rect = self.image.get_rect()
@@ -21,8 +21,6 @@ class Ship(Sprite):
         self.moving_left = False
         self.moving_up = False
         self.moving_down = False
-
-
 
     def update(self):
         if self.moving_right and self.rect.right < self.screen_rect.right:
@@ -44,3 +42,4 @@ class Ship(Sprite):
         self.rect.midbottom = self.screen_rect.midbottom
         self.x = float(self.rect.x)
         self.y = float(self.rect.y)
+

@@ -34,3 +34,4 @@ class Settings():
         self.enemy_speed *= self.speedup_scale
 
         self.enemy_points = int(self.enemy_points * self.score_scale)
+

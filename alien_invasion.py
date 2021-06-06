@@ -10,6 +10,7 @@ from enemy import Enemy
 from game_stats import GameStats
 from button import Button
 from scoreboard import Scoreboard
+from effects import Effects
 
 
 class AlienInvasion:
@@ -17,6 +18,7 @@ class AlienInvasion:
     def __init__(self):
         pygame.init()
         self.settings = Settings()
+        self.effects = Effects()
 
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
@@ -59,6 +61,7 @@ class AlienInvasion:
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
+            self.effects.shoot.play()
 
     def _check_keyup_events(self, event):
         if event.key == pygame.K_RIGHT:
@@ -73,7 +76,7 @@ class AlienInvasion:
     def _check_play_button(self, mouse_pos):
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
-        
+
             self.settings.initialize_dynamic_settings()
 
             self.stats.reset_stats()
@@ -87,6 +90,9 @@ class AlienInvasion:
 
             self._create_fleet()
             self.ship.center_ship()
+
+            if self.stats.game_active:
+                pygame.mixer.music.play(0)
 
             pygame.mouse.set_visible(False)
 
@@ -118,6 +124,8 @@ class AlienInvasion:
 
     def _ship_hit(self):
         if self.stats.ships_left > 0:
+            self.effects.death.play()
+            pygame.mixer.music.rewind()
 
             self.stats.ships_left -= 1
             self.sb.prep_ships()
@@ -128,10 +136,11 @@ class AlienInvasion:
             self._create_fleet()
             self.ship.center_ship()
 
-            sleep(0.5)
+            sleep(1)
 
         else:
             self.stats.game_active = False
+            pygame.mixer.music.pause()
             pygame.mouse.set_visible(True)
 
     def _create_fleet(self):
@@ -141,14 +150,14 @@ class AlienInvasion:
         number_enemis_x = available_space_x // (2 * enemy_width)
 
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - (5 * enemy_height) - ship_height)
+        available_space_y = (self.settings.screen_height -
+                             (5 * enemy_height) - ship_height)
 
         number_rows = available_space_y // (2 * enemy_height)
 
         for row_number in range(number_rows):
             for enemy_number in range(number_enemis_x):
                 self._create_enemy(enemy_number, row_number)
-
 
     def _create_enemy(self, enemy_number, row_number):
         enemy = Enemy(self)
@@ -158,12 +167,12 @@ class AlienInvasion:
         enemy.rect.y = enemy.rect.height + 2 * enemy.rect.height * row_number
         self.enemis.add(enemy)
 
-
-
     def _check_bullet_enemy_collisions(self):
-        collisions = pygame.sprite.groupcollide(self.bullets, self.enemis, True, True)
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.enemis, True, True)
 
         if collisions:
+            self.effects.hit.play()
             for enemis in collisions.values():
                 self.stats.score += self.settings.enemy_points * len(enemis)
             self.sb.prep_score()
@@ -186,7 +195,6 @@ class AlienInvasion:
             self._ship_hit()
         self._check_enemis_bottom()
 
-
     def _check_fleet_edges(self):
         for enemy in self.enemis.sprites():
             if enemy.check_edges():
@@ -201,12 +209,13 @@ class AlienInvasion:
         screen_rect = self.screen.get_rect()
         for enemy in self.enemis.sprites():
             if enemy.rect.bottom >= screen_rect.bottom:
+                self.effects.enemy_run.play()
                 self._ship_hit()
                 break
 
     def _change_fleet_direction(self):
         for enemy in self.enemis.sprites():
-                enemy.rect.y += self.settings.fleet_drop_speed
+            enemy.rect.y += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
 
     def run_game(self):
@@ -217,10 +226,10 @@ class AlienInvasion:
                 self.ship.update()
                 self._update_bullets()
                 self._update_enemis()
-                
+
             self._update_screen()
+
 
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
-
