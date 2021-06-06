@@ -32,7 +32,7 @@ class AlienInvasion:
 
         self._create_fleet()
 
-        self.play_button = Button(self, "Start")
+        self.play_button = Button(self, "Click to start")
 
     def _check_events(self):
         for event in pygame.event.get():

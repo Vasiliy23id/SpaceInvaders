@@ -2,12 +2,12 @@ class Settings():
     def __init__(self):
         self.bullet_width = 3
         self.bullet_height = 15
-        self.bullet_color = (60, 60, 60)
+        self.bullet_color = (255, 69, 60)
         self.bullets_allowed = 3
 
         self.screen_width = 800
         self.screen_height = 600
-        self.bg_color = (230, 230, 230)
+        self.bg_color = (25, 25, 112)
 
         self.ship_limit = 3
 
