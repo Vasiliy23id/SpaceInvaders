@@ -57,7 +57,7 @@ class AlienInvasion:
             self.ship.moving_up = True
         elif event.key == pygame.K_DOWN:
             self.ship.moving_down = True
-        elif event.key == pygame.K_q:
+        elif event.key == pygame.K_ESCAPE:
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
@@ -92,7 +92,7 @@ class AlienInvasion:
             self.ship.center_ship()
 
             if self.stats.game_active:
-                pygame.mixer.music.play(0)
+                pygame.mixer.music.play(-1)
 
             pygame.mouse.set_visible(False)
 
