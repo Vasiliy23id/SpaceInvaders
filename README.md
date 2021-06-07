@@ -14,6 +14,6 @@ Start the game on the left button
         RIGHT
     2)Fire
         SPACE
-    3)Exit
+    3)Exit to menu
         Esc
     4)Start 

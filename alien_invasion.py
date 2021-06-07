@@ -8,9 +8,10 @@ from settings import Settings
 from bullet import Bullet
 from enemy import Enemy
 from game_stats import GameStats
-from button import Button
+from start_button import Button
 from scoreboard import Scoreboard
 from effects import Effects
+from exit_button import Exit_button
 
 
 class AlienInvasion: # Основной класс управляющий ресурсами и поведением игры
@@ -35,6 +36,7 @@ class AlienInvasion: # Основной класс управляющий рес
         self._create_fleet() # Выстраиваем флот
 
         self.play_button = Button(self, "Click to start") # Вывод кнопки на экран
+        self.exit_button = Exit_button(self, "Exit")
 
     def _check_events(self): # Проверяет нажатия клавишь и события мыши
         for event in pygame.event.get():
@@ -46,7 +48,8 @@ class AlienInvasion: # Основной класс управляющий рес
                 self._check_keyup_events(event)
             elif event.type == pygame.MOUSEBUTTONDOWN: # Проверяет кликнул ли пользователь мышкой
                 mouse_pos = pygame.mouse.get_pos() 
-                self._check_play_button(mouse_pos) 
+                self._check_play_button(mouse_pos)
+                self._check_exit_button(mouse_pos) 
 
     def _check_keydown_events(self, event): # Проверка на нажатие клавиш
         if event.key == pygame.K_RIGHT: # Ниже клавиши управления кораблем
@@ -58,10 +61,10 @@ class AlienInvasion: # Основной класс управляющий рес
         elif event.key == pygame.K_DOWN:
             self.ship.moving_down = True
         elif event.key == pygame.K_ESCAPE: # выход из игры 
-            sys.exit() # Выход из игры
+             self.stats.game_active = False# Выход из игры
+             pygame.mouse.set_visible(True)
         elif event.key == pygame.K_SPACE: # Стрельба
             self._fire_bullet()
-            self.effects.shoot.play() # Воиспроизведение звука выстрела
 
     def _check_keyup_events(self, event): # Проверка на отпускание
         if event.key == pygame.K_RIGHT: # Клавиши управления
@@ -73,9 +76,9 @@ class AlienInvasion: # Основной класс управляющий рес
         elif event.key == pygame.K_DOWN:
             self.ship.moving_down = False
 
-    def _check_play_button(self, mouse_pos): # Cрабатывает при нажатии кнопки
-        button_clicked = self.play_button.rect.collidepoint(mouse_pos)
-        if button_clicked and not self.stats.game_active: # Если в момент нажати кнопки игра не была активна то запускаем новую игру 
+    def _check_play_button(self, mouse_pos): # Cрабатывает при нажатии кнопки старт
+        Start_button_clicked = self.play_button.rect.collidepoint(mouse_pos)
+        if Start_button_clicked and not self.stats.game_active: # Если в момент нажати кнопки игра не была активна то запускаем новую игру 
 
             self.settings.initialize_dynamic_settings() # Сбросс изменяющихся настроек 
 
@@ -94,17 +97,25 @@ class AlienInvasion: # Основной класс управляющий рес
             pygame.mixer.music.play(-1)
             pygame.mouse.set_visible(False) # Убираем видимость мыши
 
+    def _check_exit_button(self, mouse_pos): # Cрабатывает при нажатии кнопки выход
+        Exit_button_clicked = self.exit_button.exit_rect.collidepoint(mouse_pos)
+        if Exit_button_clicked and not self.stats.game_active:
+            sys.exit()
+            
+
     def _update_screen(self): # Обновляет экран 
         self.screen.fill(self.settings.bg_color)
-        self.ship.blitme()
-        for bullet in self.bullets.sprites():
-            bullet.draw_bullet()
-        self.enemis.draw(self.screen) # Выводим на экран пришельца
-
-        self.sb.show_score() # Вывод счетчика на экран
-
+        
         if not self.stats.game_active: # Rнопку видно если игра не активна
             self.play_button.draw_button()
+            self.exit_button.draw_exit_button()
+        else: # Содержимое экрана обновляется только во время игры 
+            self.ship.blitme()
+            for bullet in self.bullets.sprites():
+                bullet.draw_bullet()
+            self.enemis.draw(self.screen) # Выводим на экран пришельца
+
+            self.sb.show_score() # Вывод счетчика на экран
 
         pygame.display.flip()
 
@@ -112,6 +123,7 @@ class AlienInvasion: # Основной класс управляющий рес
         if len(self.bullets) < self.settings.bullets_allowed: # Проверка количества снарядов на экране
             new_bullet = Bullet(self)
             self.bullets.add(new_bullet)
+            self.effects.shoot.play()
 
     def _update_bullets(self):
         self.bullets.update() # Одновление позиции снарядов
@@ -224,6 +236,7 @@ class AlienInvasion: # Основной класс управляющий рес
                 self.ship.update()
                 self._update_bullets()
                 self._update_enemis()
+                
 
             self._update_screen()
 
