@@ -51,7 +51,7 @@ class AlienInvasion: # Основной класс управляющий рес
                 self._check_play_button(mouse_pos)
                 self._check_exit_button(mouse_pos) 
 
-    def _check_keydown_events(self, event): # Проверка на нажатие клавиш
+    def _check_keydown_events(self, event): 
         if event.key == pygame.K_RIGHT: # Ниже клавиши управления кораблем
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
@@ -60,9 +60,23 @@ class AlienInvasion: # Основной класс управляющий рес
             self.ship.moving_up = True
         elif event.key == pygame.K_DOWN:
             self.ship.moving_down = True
+        elif event.key == pygame.K_F1:
+            if self.settings.pause:
+                pygame.mixer.music.pause()
+                self.settings.pause = False
+            else:
+                pygame.mixer.music.unpause()
+                self.settings.pause = True
+        elif event.key == pygame.K_F2:
+            self.settings.ost -= 0.1
+            pygame.mixer.music.set_volume(self.settings.ost)
+        elif event.key == pygame.K_F3:
+            self.settings.ost += 0.1
+            pygame.mixer.music.set_volume(self.settings.ost)
         elif event.key == pygame.K_ESCAPE: # выход из игры 
-             self.stats.game_active = False# Выход из игры
+             self.stats.game_active = False
              pygame.mouse.set_visible(True)
+             pygame.mixer.music.stop()
         elif event.key == pygame.K_SPACE: # Стрельба
             self._fire_bullet()
 
@@ -94,7 +108,9 @@ class AlienInvasion: # Основной класс управляющий рес
             self._create_fleet() # Пересоздаем флот 
             self.ship.center_ship() # спавним корабль в положенном месте
             
-            pygame.mixer.music.play(-1)
+            if self.settings.pause:
+                pygame.mixer.music.play(-1)
+
             pygame.mouse.set_visible(False) # Убираем видимость мыши
 
     def _check_exit_button(self, mouse_pos): # Cрабатывает при нажатии кнопки выход

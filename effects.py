@@ -8,4 +8,4 @@ class Effects: #  Класс для работы со звуками
         self.hit = pygame.mixer.Sound("sounds/hit.ogg ")# Идут поверх фоновой музыки(попадание)
         self.death = pygame.mixer.Sound("sounds/death.ogg ")# Идут поверх фоновой музыки(столкновение)
         self.enemy_run = pygame.mixer.Sound("sounds/smeh.ogg ")# Идут поверх фоновой музыки(противник прошел мимо)
-
+          

@@ -1,3 +1,6 @@
+from effects import Effects
+
+
 class Settings(): # Класс с настройками игры настройки игры
     def __init__(self):
         # Параметры выстрелов
@@ -13,19 +16,21 @@ class Settings(): # Класс с настройками игры настрой
         self.ship_limit = 3 # Количество жизней
 
         self.fleet_drop_speed = 10 # Снижение флота при достижении края
-
         self.speedup_scale = 1.1
-        self.score_scale = 1.5 # Увеличение стоимости противника как и скорость игры
+        self.score_scale = 1.5 # Увеличение стоимости противника как и скорость игры # Флаг для работы с музыкой
 
         self.initialize_dynamic_settings()
+        self.effects()
+
+    def effects(self):
+        self.pause = True# Флаг для работы с музыкой вкыл выкл
+        self.ost = 1 # Флаг для работы с музыкой громкость
 
     def initialize_dynamic_settings(self): # Настройки которые меняются в ходе игры
         self.ship_speed = 1.5
         self.bullet_speed = 3.0
         self.enemy_speed = 1.0
-
         self.enemy_points = 50 # За одного врага
-
         self.fleet_direction = 1 # Движение противника в стороны
 
     def increase_speed(self): # Изменяет скорость(повышат сложность)
