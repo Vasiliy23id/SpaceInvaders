@@ -10,7 +10,7 @@ class Exit_button(): # Класс для работы с состоянием и
         self.button_color = (173, 255, 47)
         self.text_color = (105, 105, 105)
         self.font = pygame.font.SysFont(None, 48) # шрифты и их размер
-        # выравнивание кнопки относительно центра
+        # выравнивание кнопки относительно центра нижней части экрана
         self.exit_rect = pygame.Rect(0, 0, self.width, self.height)
         self.exit_rect.midbottom = self.screen_rect.midbottom
         self.exit_rect.bottom = + 550
