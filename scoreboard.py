@@ -20,12 +20,12 @@ class Scoreboard(): # Класс для вывода счетчиков на э�
         self.prep_level()
         self.prep_ships()
 
-    def prep_score(self): # Преобразует счетчики в графическое изображение 
+    def prep_score(self): # Преобразует счетчик в графическое изображение 
         rounded_score = round(self.stats.score, -1)
         score_str = "{:,}".format(rounded_score) # округляет счет до десятков
         self.score_image = self.font.render(
             score_str, True, self.text_color, self.settings.bg_color)
-        # Вывод четчиков в правой верхней части экранна
+        # Вывод четчик в правой верхней части экранна
         self.score_rect = self.score_image.get_rect()
         self.score_rect.right = self.screen_rect.right - 20
         self.score_rect.top = 20

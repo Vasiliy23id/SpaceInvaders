@@ -1,5 +1,3 @@
-from effects import Effects
-
 
 class Settings(): # Класс с настройками игры настройки игры
     def __init__(self):
